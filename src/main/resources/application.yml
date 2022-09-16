@@ -1,0 +1,25 @@
+example.db:
+  hostname: localhost
+  port: 5432
+  fragment: postgresql://${example.db.hostname}:${example.db.port}/postgres
+
+spring.r2dbc:
+  url: r2dbc:${example.db.fragment}
+  username: postgres
+  password: postgres
+  pool:
+    enabled: true
+    initial-size: 10
+    max-size: 10
+    max-idle-time: 5m
+    validation-query: SELECT 1
+    acquire-retry: 3
+    max-acquire-time: 10s
+    max-create-connection-time: 10s
+
+spring.flyway:
+  url: jdbc:${example.db.fragment}
+  user: postgres
+  password: postgres
+  locations: classpath:db/migration
+  schemas: public
