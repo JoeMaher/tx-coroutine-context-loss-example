@@ -29,27 +29,24 @@ class ExampleControllerTest {
 
     @Test
     fun `create example`() = runBlocking {
-        val input = ExampleInput(value = UUID.randomUUID().toString())
-
-        val result = webTestClient.post()
-            .uri("/example")
-            .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(input)
-            .exchange()
-            .expectStatus().isOk
-            .expectBody<ExampleResult>()
-            .returnResult().responseBody!!
-
-        assertThat(result.value, equalTo(input.value))
-        assertThat(exampleRepository.getByValue(result.value), notNullValue())
+        create("/example")
     }
 
     @Test
     fun `create example in transaction`() = runBlocking {
+        create("/example-in-transaction")
+    }
+
+    @Test
+    fun `create example with transaction service`() = runBlocking {
+        create("/example-in-transactional-operator")
+    }
+
+    private suspend fun create(uri: String) {
         val input = ExampleInput(value = UUID.randomUUID().toString())
 
         val result = webTestClient.post()
-            .uri("/example-in-transaction")
+            .uri(uri)
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue(input)
             .exchange()
